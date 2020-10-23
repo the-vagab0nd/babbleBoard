@@ -1,0 +1,47 @@
+{% extends 'base.html' %}
+{% block content %}
+<div id='posts'>
+    Loading...
+</div>
+<script>
+    const postsElement = document.getElementById("posts")
+    const xhr = new XMLHttpRequest()
+    const method = 'GET'
+    const url = '/posts'
+    var finalPostStr = "";
+    xhr.responseType = "json"
+
+    function handleDidLike (post_id, currentCount) {
+        console.log(post_id, currentCount)
+    }
+
+    function LikeBtn(post) {
+        return "<button class='btn btn-primary', onclick=handleDidLike("+ post.id + ","+ post.likes +")>" + post.likes + " Likes</button>"
+    }
+
+
+
+    function formatedTweetElement(post){
+        var formattedTweet = "<div class='mb-4 post' id='post-"
+                             + post.id + "' ><p>"
+                             + post.content
+                             + "<p><div class='btn-group'>" + LikeBtn(post) + "</div></p>"
+                             + "</p></div>"
+        return formattedTweet;
+    }
+
+
+
+    xhr.open(method, url)
+    xhr.onload = function () {
+        const serverResponse = xhr.response
+        var listedItems = serverResponse.response
+        for (var i = 0; i < listedItems.length; i++) {
+            finalPostStr += formatedTweetElement(listedItems[i]);
+        }
+        postsElement.innerHTML = finalPostStr;
+        console.log(finalPostStr)
+    }
+    xhr.send()
+</script>
+{% endblock %}
